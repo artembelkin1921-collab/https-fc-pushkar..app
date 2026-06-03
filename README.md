@@ -1,6 +1,3 @@
-
-[index.html](https://github.com/user-attachments/files/28478649/index.html)
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -205,6 +202,7 @@
         .md-teams-score { display: flex; justify-content: space-between; align-items: center; font-family: 'Montserrat'; margin-bottom: 10px;}
         .md-team { font-size: clamp(1.2rem, 3vw, 2rem); font-weight: 900; flex: 1; }
         .md-score { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; color: var(--gold); padding: 0 10px; white-space: nowrap; }
+        .md-team { color: #fff; }
         .md-date { font-size: 0.8rem; color: var(--text-muted); }
         .md-section { background: rgba(255,255,255,0.03); border-radius: 8px; padding: 20px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05); }
         .md-section-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; }
@@ -307,7 +305,6 @@
 
 </div>
 
-<!-- Модальное окно для Игроков -->
 <div class="modal-overlay" id="playerModal">
     <div class="modal-card">
         <button class="modal-close" onclick="closeModals()">×</button>
@@ -331,7 +328,6 @@
     </div>
 </div>
 
-<!-- Модальное окно деталей матча -->
 <div class="modal-overlay" id="matchDetailModal">
     <div class="modal-card">
         <button class="modal-close" onclick="closeModals()">×</button>
@@ -352,7 +348,6 @@
     </div>
 </div>
 
-<!-- Модальное окно: Все матчи -->
 <div class="modal-overlay" id="allMatchesModal">
     <div class="modal-card">
         <button class="modal-close" onclick="closeModals()">×</button>
@@ -362,7 +357,6 @@
     </div>
 </div>
 
-<!-- НОВОЕ МОДАЛЬНОЕ ОКНО: Видеогалерея -->
 <div class="modal-overlay" id="mediaModal">
     <div class="modal-card wide">
         <button class="modal-close" onclick="closeModals()">×</button>
@@ -370,15 +364,12 @@
         
         <div class="media-layout">
             <div class="main-video-container">
-                <!-- Убран тег source, путь теперь прописывается напрямую в video через JS -->
                 <video id="mainVideoPlayer" controls playsinline preload="metadata">
                     Ваш браузер не поддерживает встроенные видео.
                 </video>
             </div>
             
-            <div class="video-playlist" id="videoPlaylistRoot">
-                <!-- Сюда с помощью JS будет генерироваться список видео -->
-            </div>
+            <div class="video-playlist" id="videoPlaylistRoot"></div>
         </div>
     </div>
 </div>
@@ -424,9 +415,8 @@
 
     // --- БАЗА ВИДЕОРОЛИКОВ ---
     const mediaData = [
-        { id: 'v1', title: 'Пушкарь - Торнадо (14:8)', src: 'tornado_14_8.mp4' },
-        { id: 'v2', title: 'Пример видео 2', src: 'example_video_2.mp4' },
-        { id: 'v3', title: 'Пример видео 3', src: 'example_video_3.mp4' }
+        { id: 'v1', title: 'Пушкарь - Торнадо (14:8) — Часть 1', src: 'tornado_14_8_part1.mp4' },
+        { id: 'v2', title: 'Пушкарь - Торнадо (14:8) — Часть 2', src: 'tornado_14_8_part2.mp4' }
     ];
 
     // --- ЛОГИКА МАТЧ-ЦЕНТРА ---
@@ -436,7 +426,7 @@
     function setMatchFilter(type) {
         currentMatchFilter = type;
         document.querySelectorAll('.match-tab-btn').forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
+        if(event) event.target.classList.add('active');
         renderMatchCenter();
     }
 
@@ -498,7 +488,7 @@
 
     function filterSquad(type) {
         document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
+        if(event) event.target.classList.add('active');
         renderSquad(type);
     }
 
@@ -585,7 +575,6 @@
     }
 
     function selectVideo(id) {
-        // Обновляем визуальное отображение выбранного видео
         document.querySelectorAll('.playlist-item').forEach(el => {
             el.classList.remove('active');
             el.querySelector('.playlist-status').innerText = 'СМОТРЕТЬ';
@@ -596,14 +585,12 @@
             activeItem.querySelector('.playlist-status').innerText = '▶ ИГРАЕТ';
         }
 
-        // Надежное обновление видеоплеера
         const videoInfo = mediaData.find(v => v.id === id);
         if (videoInfo) {
             const player = document.getElementById('mainVideoPlayer');
-            player.src = videoInfo.src; // Присваиваем путь напрямую тегу video
+            player.src = videoInfo.src; 
             player.load();
             
-            // Запуск видео с перехватом ошибки блокировки браузера
             const playPromise = player.play();
             if (playPromise !== undefined) {
                 playPromise.catch(error => {
@@ -617,7 +604,6 @@
         modals.forEach(m => m.classList.remove('active'));
         document.body.style.overflow = '';
         
-        // Автоматически ставим видео на паузу при закрытии окна
         const player = document.getElementById('mainVideoPlayer');
         if (player) {
             player.pause();
